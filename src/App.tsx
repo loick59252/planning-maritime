@@ -57,7 +57,7 @@ function App() {
       minHeight: '100vh',
       fontFamily: 'Arial, sans-serif'
     }}>
-      <h1>🚢 Planning Maritime</h1>
+      <h1>🚢 Planning Maritime test</h1>
       <p>Gère tes journées de travail, Loick !</p>
 
       <div style={{ margin: '20px' }}>
@@ -98,7 +98,6 @@ function App() {
         </ul>
       </div>
     </div>
-    <p>test</p>
   );
 }
 
