@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "planning-maritime-loick",
   storageBucket: "planning-maritime-loick.firebasestorage.app",
   messagingSenderId: "432495659193",
-  appId: "1:432495659193:web:10a4dca69937e58490f368"
+  appId: "1:432495659193:web:10a4dca69937e58490f368",
   measurementId: "G-CFMB6Z73DG"
 };
 
