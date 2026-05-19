@@ -1,13 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+
+// Remplace par TA configuration Firebase (copiée depuis Firebase Console)
+const firebaseConfig = {
+  apiKey: "AIzaSyAvzBdwVqiicoY-0gx8D5hGZzRjHU52Z4g",
+  authDomain: "planning-maritime-loick.firebaseapp.com",
+  projectId: "planning-maritime-loick",
+  storageBucket: "planning-maritime-loick.firebasestorage.app",
+  messagingSenderId: "432495659193",
+  appId: "1:432495659193:web:10a4dca69937e58490f368"
+  measurementId: "G-CFMB6Z73DG"
+};
+
+// Initialise Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 function App() {
-  const [journee, setJournee] = useState<string>("")
+  const [journee, setJournee] = useState<string>("");
+  const [journees, setJournees] = useState<string[]>([]);
 
-  const ajouterJournee = () => {
-    if (journee.trim() === "") return
-    alert(`✅ Journée ajoutée : ${journee}`)
-    setJournee("")
-  }
+  // Charge les journées depuis Firestore
+  useEffect(() => {
+    const fetchJournees = async () => {
+      const querySnapshot = await getDocs(collection(db, "journees"));
+      const journeesList: string[] = [];
+      querySnapshot.forEach((doc) => {
+        journeesList.push(doc.data().text);
+      });
+      setJournees(journeesList);
+    };
+    fetchJournees();
+  }, []);
+
+  // Ajoute une journée à Firestore
+  const ajouterJournee = async () => {
+    if (journee.trim() === "") return;
+    await addDoc(collection(db, "journees"), { text: journee });
+    setJournee("");
+    // Rafraîchit la liste
+    const querySnapshot = await getDocs(collection(db, "journees"));
+    const journeesList: string[] = [];
+    querySnapshot.forEach((doc) => {
+      journeesList.push(doc.data().text);
+    });
+    setJournees(journeesList);
+  };
 
   return (
     <div style={{
@@ -26,7 +65,7 @@ function App() {
           type="text"
           value={journee}
           onChange={(e) => setJournee(e.target.value)}
-          placeholder="Ex: 15/05 - Capitaine - 8h-18h"
+          placeholder="Ex: 19/05 - Capitaine - 8h-18h"
           style={{
             padding: '10px',
             width: '300px',
@@ -51,10 +90,15 @@ function App() {
       </div>
 
       <div style={{ marginTop: '20px' }}>
-        <p>Prochaine étape : Sauvegarder dans Firebase !</p>
+        <h2>Tes journées :</h2>
+        <ul style={{ listStyle: 'none', padding: 0 }}>
+          {journees.map((j, index) => (
+            <li key={index} style={{ margin: '5px 0' }}>{j}</li>
+          ))}
+        </ul>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
